@@ -1,3 +1,40 @@
+body {
+	background-color: #333333;
+	color: white;
+	
+	font-family: franklin gothic;
+	font-size: 15pt;
+	text-align: center;
+}
+
 input {
+	background-color: #333333;
+	color: #eeee00;
+	
+	border: none;
+	
+	font-family: franklin gothic;
+	font-size: 15pt;
+	text-align: right;
+	
 	width: 20px;
+	padding: 10px;
+}
+
+#run {
+	background-color: #666666;
+	color: white;
+	
+	font-family: franklin gothic;
+	font-size: 15pt;
+	
+	height: 40px;
+	width: 200px;
+}
+
+#viewport {
+	width: 600px;
+	height: 600px;
+	
+	border-style: ridge;
 }

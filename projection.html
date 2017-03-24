@@ -4,22 +4,26 @@
 		<title>
 			Projection
 		</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<link rel="stylesheet" href="projection.css">
 	</head>
 	<body>
 		Vector: &lt;
-		<input type="text" name="i" value="1">,
-		<input type="text" name="j" value="2">,
-		<input type="text" name="k" value="3">
+		<input type="text" id="i" value="1">,
+		<input type="text" id="j" value="2">,
+		<input type="text" id="k" value="3">
 		&gt;
 		<br><br>
 		Viewplane:
-		<input type="text" name="x" value="1"> x +
-		<input type="text" name="y" value="2"> y +
-		<input type="text" name="z" value="3"> z =
-		<input type="text" name="c" value="3">
+		<input type="text" id="x" value="1"> x +
+		<input type="text" id="y" value="1"> y +
+		<input type="text" id="z" value="1"> z =
+		<input type="text" id="c" value="3">
+		<br><br>
+		<button id="run">GO!</button>
 		<br><br><br>
 		<canvas id="viewport"></canvas>
+		
 		<script src="engine.js"></script>
 	</body>
 </html>
