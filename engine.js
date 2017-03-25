@@ -58,25 +58,43 @@ function update() {
 		ctx.strokeStyle = "#11ee11";
 		drawFunc(0,1);
 	} else {
-		var angleI = Math.acos( -y/( Math.sqrt(1-x*x)*Math.sqrt(1-z*z) ) ), // Magic
-			angleJ = Math.acos( x/( Math.sqrt(1-y*y)*Math.sqrt(1-z*z) ) ); // Magic
-			if ( z > 0 ) {
-				angleI *= -1;
-				angleJ *= -1;
-			}
-			
+		// Angles for axes
+		var angleI = Math.acos( -y/( Math.sqrt(1-x*x) * Math.sqrt(1-z*z) ) ), // Magic
+			angleJ = Math.acos( x/( Math.sqrt(1-y*y) * Math.sqrt(1-z*z) ) ); // Magic
+		// If z is positive, i and j are down. If z is negative, i and j are up.
+		if ( z > 0 ) {
+			angleI *= -1;
+			angleJ *= -1;
+		}
+		// Draw axes
 		ctx.strokeStyle = "#ee1111";
-		drawPolar( angleI , 1-Math.abs(x)); // Magic
+		drawPolar( angleI, 1-Math.abs(x) ); // Magic
 		ctx.strokeStyle = "#11ee11";
-		drawPolar( angleJ , 1-Math.abs(y)); // Magic
+		drawPolar( angleJ, 1-Math.abs(y) ); // Magic
 		ctx.strokeStyle = "#1111ee";
-		drawPolar(Math.PI/2, 1-Math.abs(z)); // Vertical, Magic
+		drawPolar( Math.PI/2, 1-Math.abs(z) ); // Vertical, Magic
+		
+		// Components for vector <i,j,k>-(ix+jy+kz)<x,y,z>
+		var v_i = i - x*(i*x+j*y+k*z),
+			v_j = j - y*(i*x+j*y+k*z),
+			v_k = k - z*(i*x+j*y+k*z);
+		// Angle for vector
+		var angleV = Math.acos( (j*x-i*y)/( Math.sqrt( (1-x*x) ) * Math.sqrt( v_i*v_i + v_j*v_j + v_k*v_k ) ) ); // Magic
+		// If k is negative, v points down.
+		if ( k < 0 ) {
+			angleV *= -1;
+		}
+		// Draw vector
+		ctx.strokeStyle = "#111111";
+		drawPolar( angleV, 1-Math.abs(i*x+j*y+k*z) );
 		
 		/* Notes on "Magic":
 			Angles:
 				The positive x vector is given by (n x k)
 					where n is the unit vector of the normal of the plane
-				cos(theta) between V and positive x is given by ( (n x k) . V )/( ||n x k|| * ||V||)
+					In this case, that's <0, z, -y>
+				The projection of the vector along the plane is given by ( V - (V . n) * n / ( ||V|| * ||n|| ) )
+				cos(theta) between V and positive x is given by ( (n x k) . V )/( ||n x k|| * ||V|| )
 				||V|| is given by sqrt( (v_1)^2 + (v_2) ^2 + ... + (v_n)^2 )
 					where V = <v_1, v_2, ... , v_n>
 				I manually computed the values for V = i and V = j and the results are given.
