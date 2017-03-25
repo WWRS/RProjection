@@ -6,7 +6,7 @@ function getVal(id) {
 	var num = $(id).val().replace(/[^\d-\.]/g, ""); // Crude way to fix non-numeric inputs
 	if (num == "") { // ex, the user entered __x which should be interpreted as x = 1x
 		return 1;
-	} else if (num == '-'){ //ex, the user entered -x which should be interpreted as -x = -1x
+	} else if (num == '-') { //ex, the user entered -x which should be interpreted as -x = -1x
 		return -1;
 	} else {
 		return num;
@@ -52,19 +52,23 @@ function update() {
 	ctx.fillRect(-300,-300, 600,600);
 	
 	// Draw axes
-	if ( x==0 && y==0 ){ // If vertical (or 0-vector), draw xy-plane
+	if ( x==0 && y==0 ) { // If vertical (or 0-vector), draw xy-plane
 		ctx.strokeStyle = "#ee1111";
 		drawFunc(1,0);
 		ctx.strokeStyle = "#11ee11";
 		drawFunc(0,1);
 	} else {
+		var angleI = Math.acos( -y/( Math.sqrt(1-x*x)*Math.sqrt(1-z*z) ) ), // Magic
+			angleJ = Math.acos( x/( Math.sqrt(1-y*y)*Math.sqrt(1-z*z) ) ); // Magic
+			if ( z > 0 ) {
+				angleI *= -1;
+				angleJ *= -1;
+			}
+			
 		ctx.strokeStyle = "#ee1111";
-		var x2=x*x,
-			y2=y*y,
-			z2=z*z;
-		drawPolar( -Math.acos( -y/( Math.sqrt(1-x*x)*Math.sqrt(1-z*z) ) ) , 1-Math.abs(x)); // Magic
+		drawPolar( angleI , 1-Math.abs(x)); // Magic
 		ctx.strokeStyle = "#11ee11";
-		drawPolar( -Math.acos( x/( Math.sqrt(1-y*y)*Math.sqrt(1-z*z) ) ) , 1-Math.abs(y)); // Magic
+		drawPolar( angleJ , 1-Math.abs(y)); // Magic
 		ctx.strokeStyle = "#1111ee";
 		drawPolar(Math.PI/2, 1-Math.abs(z)); // Vertical, Magic
 		
