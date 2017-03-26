@@ -26,6 +26,11 @@ function drawPolar(angle, length) {
 	drawFunc(length*Math.cos(angle), length*Math.sin(angle));
 }
 
+// Gotta round so the numbers aren't affected by float imprecision.
+function acosRound(num) {
+	return Math.acos(Math.round(num*1e15)/1e15);
+}
+
 // Called on load and on button press. Updates canvas.
 function update() {
 	// Get all the values
@@ -61,8 +66,9 @@ function update() {
 		drawFunc(i,j);
 	} else {
 		// Angles for axes
-		var angleI = Math.acos( -y/( Math.sqrt( (1-z*z)*(1-x*x) ) ) ), // Magic
-			angleJ = Math.acos( x/( Math.sqrt( (1-z*z)*(1-y*y) ) ) ); // Magic
+		var angleI = acosRound( -y/( Math.sqrt( (1-z*z)*(1-x*x) ) ) ), // Magic
+			angleJ = acosRound( x/( Math.sqrt( (1-z*z)*(1-y*y) ) ) ); // Magic
+		console.log(-y/( Math.sqrt( (1-z*z)*(1-x*x) ) ));
 		// acos returns up. If z*x is positive, i is down. If z*y is positive, j is down.
 		if ( z*x > 0 ) {
 			angleI *= -1;
@@ -79,7 +85,7 @@ function update() {
 		drawPolar( Math.PI/2, Math.sqrt(1-Math.abs(z)) ); // Vertical, Magic
 		
 		// Angle for vector
-		var angleV = Math.acos( (j*x-i*y)/( Math.sqrt( (1-z*z)*( 1-(i*x+j*y+k*z)*(i*x+j*y+k*z) ) ) ) ); // Magic
+		var angleV = acosRound( (j*x-i*y)/( Math.sqrt( (1-z*z)*( 1-(i*x+j*y+k*z)*(i*x+j*y+k*z) ) ) ) ); // Magic
 		// acos returns up. If the z-projection of the vector is less than 0, v points down.
 		if ( k - z*(i*x+j*y+k*z) < 0 ) {
 			angleV *= -1;
