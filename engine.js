@@ -61,7 +61,7 @@ function update() {
 		// Angles for axes
 		var angleI = Math.acos( -y/( Math.sqrt( (1-z*z)*(1-x*x) ) ) ), // Magic
 			angleJ = Math.acos( x/( Math.sqrt( (1-z*z)*(1-y*y) ) ) ); // Magic
-		// If z is positive, i and j are down. If z is negative, i and j are up.
+		// acos returns up. If z*x is positive, i is down. If z*y is positive, j is down.
 		if ( z*x > 0 ) {
 			angleI *= -1;
 		}
@@ -78,7 +78,7 @@ function update() {
 		
 		// Angle for vector
 		var angleV = Math.acos( (j*x-i*y)/( Math.sqrt( (1-z*z)*( 1-(i*x+j*y+k*z)*(i*x+j*y+k*z) ) ) ) ); // Magic
-		// If the z-projection of the vector is less than 0, v points down.
+		// acos returns up. If the z-projection of the vector is less than 0, v points down.
 		if ( k - z*(i*x+j*y+k*z) < 0 ) {
 			angleV *= -1;
 		}
