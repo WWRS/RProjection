@@ -52,7 +52,7 @@ function update() {
 	ctx.fillRect(-300,-300, 600,600);
 	
 	// Draw axes
-	if ( x==0 && y==0 ) { // If vertical (or 0-vector), draw xy-plane
+	if ( x==0 && y==0 ) { // If vertical, draw xy-plane
 		ctx.strokeStyle = "#ee1111";
 		drawFunc(1,0);
 		ctx.strokeStyle = "#11ee11";
@@ -68,18 +68,18 @@ function update() {
 		}
 		// Draw axes
 		ctx.strokeStyle = "#ee1111";
-		drawPolar( angleI, 1-Math.abs(x) ); // Magic
+		drawPolar( angleI, Math.sqrt(1-Math.abs(x)) ); // Magic
 		ctx.strokeStyle = "#11ee11";
-		drawPolar( angleJ, 1-Math.abs(y) ); // Magic
+		drawPolar( angleJ, Math.sqrt(1-Math.abs(y)) ); // Magic
 		ctx.strokeStyle = "#1111ee";
-		drawPolar( Math.PI/2, 1-Math.abs(z) ); // Vertical, Magic
+		drawPolar( Math.PI/2, Math.sqrt(1-Math.abs(z)) ); // Vertical, Magic
 		
 		// Components for vector <i,j,k>-(ix+jy+kz)<x,y,z>
 		var v_i = i - x*(i*x+j*y+k*z),
 			v_j = j - y*(i*x+j*y+k*z),
 			v_k = k - z*(i*x+j*y+k*z);
 		// Angle for vector
-		var angleV = Math.acos( (j*x-i*y)/( Math.sqrt( (1-x*x) ) * Math.sqrt( v_i*v_i + v_j*v_j + v_k*v_k ) ) ); // Magic
+		var angleV = Math.acos( (j*x-i*y)/( Math.sqrt(1-x*x) * Math.sqrt( v_i*v_i + v_j*v_j + v_k*v_k ) ) ); // Magic
 		// If k is negative, v points down.
 		if ( k < 0 ) {
 			angleV *= -1;
@@ -112,6 +112,46 @@ function update() {
 
 // Handle button click
 $("#gobutton").click( update );
+
+window.addEventListener("keydown", function (event) {
+	// Do nothing if the event was already processed
+	if (event.defaultPrevented) {
+		return;
+	}
+
+	switch (event.key) {
+		case "Enter":
+			update();
+			break;
+		case "w":
+		case "ArrowUp":
+			$("#z").val(getVal("#z")*1.02);
+			update();
+			break;
+		case "s":
+		case "ArrowDown":
+			$("#z").val(getVal("#z")*0.98);
+			update();
+			break;
+		case "a":
+		case "ArrowLeft":
+			$("#x").val(getVal("#x")*1.01);
+			$("#y").val(getVal("#y")*0.99);
+			update();
+			break;
+		case "d":
+		case "ArrowRight":
+			$("#y").val(getVal("#y")*1.01);
+			$("#x").val(getVal("#x")*0.99);
+			update();
+			break;
+		default:
+			return; // Quit when this doesn't handle the key event.
+  }
+
+  // Cancel the default action to avoid it being handled twice
+  event.preventDefault();
+}, true); //Thanks, exd5cxd4
 
 // Initialization of ctx and first draw
 $( document ).ready( function() {
