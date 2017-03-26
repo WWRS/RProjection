@@ -57,6 +57,8 @@ function update() {
 		drawFunc(1,0);
 		ctx.strokeStyle = "#11ee11";
 		drawFunc(0,1);
+		ctx.strokeStyle = "#111111";
+		drawFunc(i,j);
 	} else {
 		// Angles for axes
 		var angleI = Math.acos( -y/( Math.sqrt( (1-z*z)*(1-x*x) ) ) ), // Magic
@@ -106,7 +108,6 @@ function update() {
 			I manually computed and simplified a lot of math.
 		*/
 	}
-	
 }
 
 // Handle button click
