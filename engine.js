@@ -59,8 +59,8 @@ function update() {
 		drawFunc(0,1);
 	} else {
 		// Angles for axes
-		var angleI = Math.acos( -y/( Math.sqrt(1-x*x) * Math.sqrt(1-z*z) ) ), // Magic
-			angleJ = Math.acos( x/( Math.sqrt(1-y*y) * Math.sqrt(1-z*z) ) ); // Magic
+		var angleI = Math.acos( -y/( Math.sqrt( (1-x*x)*(1-z*z) ) ) ), // Magic
+			angleJ = Math.acos( x/( Math.sqrt( (1-y*y)*(1-z*z) ) ) ); // Magic
 		// If z is positive, i and j are down. If z is negative, i and j are up.
 		if ( z > 0 ) {
 			angleI *= -1;
@@ -74,19 +74,15 @@ function update() {
 		ctx.strokeStyle = "#1111ee";
 		drawPolar( Math.PI/2, Math.sqrt(1-Math.abs(z)) ); // Vertical, Magic
 		
-		// Components for vector <i,j,k>-(ix+jy+kz)<x,y,z>
-		var v_i = i - x*(i*x+j*y+k*z),
-			v_j = j - y*(i*x+j*y+k*z),
-			v_k = k - z*(i*x+j*y+k*z);
 		// Angle for vector
-		var angleV = Math.acos( (j*x-i*y)/( Math.sqrt(1-x*x) * Math.sqrt( v_i*v_i + v_j*v_j + v_k*v_k ) ) ); // Magic
-		// If k is negative, v points down.
-		if ( k < 0 ) {
+		var angleV = Math.acos( (j*x-i*y)/( Math.sqrt( (1-z*z)*( 1-(i*x+j*y+k*z)*(i*x+j*y+k*z) ) ) ) ); // Magic
+		// If the z-projection of the vector is less than 0, v points down.
+		if ( k - z*(i*x+j*y+k*z) < 0 ) {
 			angleV *= -1;
 		}
 		// Draw vector
 		ctx.strokeStyle = "#111111";
-		drawPolar( angleV, 1-Math.abs(i*x+j*y+k*z) );
+		drawPolar( angleV, Math.sqrt(1-Math.abs(i*x+j*y+k*z)) );
 		
 		/* Notes on "Magic":
 			Angles:
@@ -97,7 +93,6 @@ function update() {
 				cos(theta) between V and positive x is given by ( (n x k) . V )/( ||n x k|| * ||V|| )
 				||V|| is given by sqrt( (v_1)^2 + (v_2) ^2 + ... + (v_n)^2 )
 					where V = <v_1, v_2, ... , v_n>
-				I manually computed the values for V = i and V = j and the results are given.
 			
 			Lengths:
 				The length is given by ( V - comp_n(V) )
@@ -105,6 +100,8 @@ function update() {
 					  and n is the normal vector to the plane
 				comp_V(U) is given by (U . V)/( ||U|| * ||V|| )
 				In these cases, all the vectors are unit vectors, so the math becomes trivial.
+				
+			I manually computed and simplified a lot of math.
 		*/
 	}
 	
