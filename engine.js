@@ -59,11 +59,13 @@ function update() {
 		drawFunc(0,1);
 	} else {
 		// Angles for axes
-		var angleI = Math.acos( -y/( Math.sqrt( (1-x*x)*(1-z*z) ) ) ), // Magic
-			angleJ = Math.acos( x/( Math.sqrt( (1-y*y)*(1-z*z) ) ) ); // Magic
+		var angleI = Math.acos( -y/( Math.sqrt( (1-z*z)*(1-x*x) ) ) ), // Magic
+			angleJ = Math.acos( x/( Math.sqrt( (1-z*z)*(1-y*y) ) ) ); // Magic
 		// If z is positive, i and j are down. If z is negative, i and j are up.
-		if ( z > 0 ) {
+		if ( z*x > 0 ) {
 			angleI *= -1;
+		}
+		if ( z*y > 0 ) {
 			angleJ *= -1;
 		}
 		// Draw axes
