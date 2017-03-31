@@ -21,16 +21,6 @@ function drawFunc(x, y) {
 	ctx.stroke();
 }
 
-// Does the math to convert an angle (in radians) and a length (as a fraction) to functional notation
-function drawPolar(angle, length) {
-	drawFunc(length*Math.cos(angle), length*Math.sin(angle));
-}
-
-// Gotta round so the numbers aren't affected by float imprecision.
-function acosRound(num) {
-	return Math.acos(Math.round(num*1e15)/1e15);
-}
-
 // Called on load and on button press. Updates canvas.
 function update() {
 	// Get all the values
@@ -52,6 +42,9 @@ function update() {
 	y /= lxyz;
 	z /= lxyz;
 	
+	// s is used repeatedly, so calculate it once and store it to save some time
+	var s = Math.sqrt(1-z*z);
+	
 	// Clean the canvas by drawing over it
 	ctx.fillStyle = "#eeeeee";
 	ctx.fillRect(-300,-300, 600,600);
@@ -65,53 +58,25 @@ function update() {
 		ctx.strokeStyle = "#111111";
 		drawFunc(i,j);
 	} else {
-		// Angles for axes
-		var angleI = acosRound( -y/( Math.sqrt( (1-z*z)*(1-x*x) ) ) ), // Magic
-			angleJ = acosRound( x/( Math.sqrt( (1-z*z)*(1-y*y) ) ) ); // Magic
-		console.log(-y/( Math.sqrt( (1-z*z)*(1-x*x) ) ));
-		// acos returns up. If z*x is positive, i is down. If z*y is positive, j is down.
-		if ( z*x > 0 ) {
-			angleI *= -1;
-		}
-		if ( z*y > 0 ) {
-			angleJ *= -1;
-		}
 		// Draw axes
 		ctx.strokeStyle = "#ee1111";
-		drawPolar( angleI, Math.sqrt(1-Math.abs(x)) ); // Magic
+		drawFunc( -y/s, -x*z/s ); // Magic
 		ctx.strokeStyle = "#11ee11";
-		drawPolar( angleJ, Math.sqrt(1-Math.abs(y)) ); // Magic
+		drawFunc( x/s, -y*z/s ); // Magic
 		ctx.strokeStyle = "#1111ee";
-		drawPolar( Math.PI/2, Math.sqrt(1-Math.abs(z)) ); // Vertical, Magic
+		drawFunc( 0, s ); // Magic
 		
-		// Angle for vector
-		var angleV = acosRound( (j*x-i*y)/( Math.sqrt( (1-z*z)*( 1-(i*x+j*y+k*z)*(i*x+j*y+k*z) ) ) ) ); // Magic
-		// acos returns up. If the z-projection of the vector is less than 0, v points down.
-		if ( k - z*(i*x+j*y+k*z) < 0 ) {
-			angleV *= -1;
-		}
 		// Draw vector
 		ctx.strokeStyle = "#111111";
-		drawPolar( angleV, Math.sqrt(1-Math.abs(i*x+j*y+k*z)) );
+		drawFunc( (x*j-y*i)/s, (-i*x*z-j*y*z)/s + k*s ); // Magic
 		
 		/* Notes on "Magic":
-			Angles:
-				The positive x vector is given by (n x k)
-					where n is the unit vector of the normal of the plane
-					In this case, that's <0, z, -y>
-				The projection of the vector along the plane is given by ( V - (V . n) * n / ( ||V|| * ||n|| ) )
-				cos(theta) between V and positive x is given by ( (n x k) . V )/( ||n x k|| * ||V|| )
-				||V|| is given by sqrt( (v_1)^2 + (v_2) ^2 + ... + (v_n)^2 )
-					where V = <v_1, v_2, ... , v_n>
-			
-			Lengths:
-				The length is given by ( V - comp_n(V) )
-					where V is the vector you're looking for
-					  and n is the normal vector to the plane
-				comp_V(U) is given by (U . V)/( ||U|| * ||V|| )
-				In these cases, all the vectors are unit vectors, so the math becomes trivial.
-				
-			I manually computed and simplified a lot of math.
+			Find comp_a u and comp_b u
+				where u is the vector given by projecting vector w onto (viewplane) subspace V
+				  and the basis of V: { a , b }
+					a = <-xz, -yz, x^2+y^2>
+					b = <-y, x, 0>
+			comp_a u is the y-coord of V and comp_b u is the x-coord of V
 		*/
 	}
 }
