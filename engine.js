@@ -42,9 +42,6 @@ function update() {
 	y /= lxyz;
 	z /= lxyz;
 	
-	// s is used repeatedly, so calculate it once and store it to save some time
-	var s = Math.sqrt(1-z*z);
-	
 	// Clean the canvas by drawing over it
 	ctx.fillStyle = "#eeeeee";
 	ctx.fillRect(-300,-300, 600,600);
@@ -58,6 +55,9 @@ function update() {
 		ctx.strokeStyle = "#111111";
 		drawFunc(i,j);
 	} else {
+		// s is used repeatedly, so calculate it once and store it to save some time
+		var s = Math.sqrt(1-z*z);
+		
 		// Draw axes
 		ctx.strokeStyle = "#ee1111";
 		drawFunc( -y/s, -x*z/s ); // Magic
